@@ -1,6 +1,3 @@
-# required packages
-# jsonlite, cli, dplyr, purrr, rio, checkmate, cleanepi
-
 #' Extract drug name from variants file
 #'
 #' @param x A character that corresponds to an entry of the Info column in the
@@ -22,9 +19,7 @@ get_drug <- function(x) {
 #'
 #' @returns A data frame potential drug resistance profile augmented with one
 #'    column corresponding the profile of the target sample
-#' @export
-#'
-#' @examples
+#' @keywords internal
 construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
   # select the columns of interest
   dat <- dat |>
@@ -88,9 +83,7 @@ construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
 #'
 #' @returns A data frame with the sample profiles augmented with a new column
 #'    corresponding to the profile of the specified sample
-#' @export
-#'
-#' @examples
+#' @keywords internal
 get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
   # safe extraction — when no other drug resistance variants are found for a
   # given sample, fill it with NA
@@ -146,9 +139,7 @@ get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
 #'
 #' @returns A list with the updated sample metadata and region probabilities
 #'    data frame
-#' @export
-#'
-#' @examples
+#' @keywords internal
 get_inferred_region <- function(json, metadata, region_proba, sample_name) {
   # populate the inferred region column in the sample metadata
   regions <- json[["geo_classification"]][["probabilities"]] |>
@@ -192,9 +183,7 @@ get_inferred_region <- function(json, metadata, region_proba, sample_name) {
 #'
 #' @returns An updated variant table where the profile of the specified sample
 #'    is added
-#' @export
-#'
-#' @examples
+#' @keywords internal
 get_confirmed_dr_variants <- function(json, variants, sample_name) {
   # add a column for the target sample
   # all values are set to '0' by default

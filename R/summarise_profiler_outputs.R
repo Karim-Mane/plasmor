@@ -1,7 +1,7 @@
 #' Summarise `malaria-profiler` outputs
 #'
 #' @param target_dir A character with the full path to the folder where the
-#'    output files from malaria-profiler are stored
+#'    output files (.json files) from malaria-profiler are stored
 #' @param variants_file A character with the path to the file with the confirmed
 #'    mutations associated to the resistance to the drugs of interest
 #' @param metadata_file A character with the full path to file with the sample
@@ -30,6 +30,16 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#'   # establish the connection to the database
+#'   results <- summarise_mp_outputs(
+#'     target_dir = tempdir(),
+#'     variants_file = file.path(tempdir(), "variant.csv"),
+#'     metadata_file = file.path(tempdir(), "metadata.txt"),
+#'     mutation_type = "confirmed",
+#'     geo_localisation = "TRUE"
+#'   )
+#' }
 summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
                                  mutation_type = c("confirmed", "potential"),
                                  geo_localisation = TRUE) {
