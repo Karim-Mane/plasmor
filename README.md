@@ -69,3 +69,21 @@ Please note that the plasmor project is released with a [Contributor
 Code of
 Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
+
+## Citing this package
+
+``` r
+citation("plasmor")
+#> To cite package 'plasmor' in publications use:
+#> 
+#>   Mané K, Delandre O (????). _plasmor: Analyse Plasmodium falciparum Data_. R package
+#>   version 0.0.1.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {plasmor: Analyse Plasmodium falciparum Data},
+#>     author = {Karim Mané and Océane Delandre},
+#>     note = {R package version 0.0.1},
+#>   }
+```
