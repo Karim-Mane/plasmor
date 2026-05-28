@@ -1,0 +1,64 @@
+# plasmor
+
+plasmor provides functions to analyse different types of data generated
+by a researcher working in the field of parasitology, specially on the
+malaria parasite *P. falciparum*.
+
+plasmor is developed at [IHU Méditerranée
+Infection](https://www.mediterranee-infection.com/accueil-2/) as part of
+Karim’s PhD at [Aix Marseille Université](https://www.univ-amu.fr/en).
+
+## Installation
+
+You can install the development version of plasmor from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("Karim-Mane/plasmor")
+```
+
+## Example
+
+These examples illustrate some of the current functionalities
+
+## Development
+
+### Lifecycle
+
+This package is currently a *concept*, as defined by the [RECON software
+lifecycle](https://www.reconverse.org/lifecycle.html). This means that
+essential features and mechanisms are still being developed, and the
+package is not ready for use outside of the development team.
+
+### Contributions
+
+Contributions are welcome via [pull
+requests](https://github.com/Karim-Mane/plasmor/pulls).
+
+### Code of Conduct
+
+Please note that the plasmor project is released with a [Contributor
+Code of
+Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.
+
+## Citing this package
+
+``` r
+
+citation("plasmor")
+#> To cite package 'plasmor' in publications use:
+#> 
+#>   Mané K, Delandre O, javelle E (????). _plasmor: Analyse Plasmodium falciparum
+#>   Data_. R package version 0.0.1.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {plasmor: Analyse Plasmodium falciparum Data},
+#>     author = {Karim Mané and Océane Delandre and Emilie javelle},
+#>     note = {R package version 0.0.1},
+#>   }
+```

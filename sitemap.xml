@@ -1,0 +1,22 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/design-principles.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/construct_dr_matrix.html</loc></url>
+<url><loc>/reference/get_confirmed_dr_variants.html</loc></url>
+<url><loc>/reference/get_drug.html</loc></url>
+<url><loc>/reference/get_inferred_region.html</loc></url>
+<url><loc>/reference/get_other_dr_variants.html</loc></url>
+<url><loc>/reference/import_from_csv.html</loc></url>
+<url><loc>/reference/import_from_json.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/plasmor-package.html</loc></url>
+<url><loc>/reference/read_confirmed_variants.html</loc></url>
+<url><loc>/reference/summarise_mp_outputs.html</loc></url>
+</urlset>
+
