@@ -14,6 +14,7 @@ The package is a library of functions to analyse different types of data generat
 Authors:
 \itemize{
   \item Océane Delandre \email{o.delandre@gmail.com} [reviewer]
+  \item Emilie javelle \email{emilie.javelle@gmail.com} [reviewer]
 }
 
 }
