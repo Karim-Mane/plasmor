@@ -90,12 +90,10 @@ get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
   df_scalars <- nested_list |>
     purrr::map_dfr(function(x) {
       scalars <- x[!sapply(x, is.list)]
-      
       # replace NULL or empty values with NA
       scalars <- lapply(scalars, function(v) {
         if (is.null(v) || length(v) == 0) NA else v
       })
-      
       as.data.frame(scalars)
     })
   
@@ -220,6 +218,86 @@ get_confirmed_dr_variants <- function(json, variants, sample_name) {
     variants[["alt"]][selection_table[["idx"]]] <- selection_table[["alt"]]
     variants[["gene_name"]][selection_table[["idx"]]] <- selection_table[["gene_name"]]
   }
+  
+  return(variants)
+}
+
+#' Generate variant data frame from a CSV variant file
+#'
+#' @param variants_file A character with the path to the variant file
+#'
+#' @returns A data frame of three columns with the gene IDs, the mutation, and
+#'    the name of the drug
+#' @keywords internal
+import_from_csv <- function(variants_file) {
+  variants <- rio::import(variants_file) |>
+    cleanepi::standardize_column_names(
+      rename = c("gene_id" = "Gene", "drug" = "Info")
+    ) |>
+    dplyr::mutate(drug = as.character(lapply(drug, get_drug)))
+  return(variants)
+}
+
+#' Generate variant data frame from a JSon variant file
+#'
+#' @param variants_file A character with the path to the variant file
+#'
+#' @returns A data frame of three columns with the gene IDs, the mutation, and
+#'    the name of the drug
+#' @keywords internal
+import_from_json <- function(variants_file) {
+  # define the output data frame
+  output_df <- data.frame(
+    gene_id = character(),
+    mutation = character(),
+    drug = character(),
+    stringsAsFactors = FALSE
+  )
+  
+  # read in the variant file in json format
+  variants <- jsonlite::read_json(variants_file)
+  
+  # loop through each element of the list (each gene)
+  for (gene in names(variants)) {
+    x <- variants[[gene]]
+    for (mutation in names(x)) {
+      annotation <- dplyr::bind_rows(x[[mutation]][["annotations"]])
+      output_df <- output_df |>
+        dplyr::add_row(
+          gene_id = gene,
+          mutation = mutation,
+          drug = annotation[["drug"]]
+        )
+    }
+  }
+  return(output_df)
+}
+
+#' Import variants file depending on whether it's in a `.csv` or `.json` format
+#'
+#' @param variants_file A character with the path to the variant file
+#'
+#' @returns A data frame of three columns with the gene IDs, the mutation, and
+#'    the name of the drug
+#' @keywords internal
+read_confirmed_variants <- function(variants_file) {
+  # get file extension
+  file_extension <- unlist(
+    strsplit(basename(variants_file), ".", fixed = TRUE)
+  )[[2]]
+  
+  # read in the variant file depending on the provided file type
+  variants <- switch(file_extension,
+    csv = import_from_csv(variants_file),
+    json = import_from_json(variants_file)
+  )
+  
+  # add the variant genomic coordinate columns
+  variants[["chrom"]] <- NA
+  variants[["pos"]] <- NA
+  variants[["ref"]] <- NA
+  variants[["alt"]] <- NA
+  variants[["gene_name"]] <- NA
   
   return(variants)
 }

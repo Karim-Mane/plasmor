@@ -89,16 +89,7 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
   samples <- gsub(".results.json", "", basename(target_files))
   
   # read in the variants file
-  variants <- rio::import(variants_file) |>
-    cleanepi::standardize_column_names(
-      rename = c("gene_id" = "Gene", "drug" = "Info")
-    ) |>
-    dplyr::mutate(drug = as.character(lapply(drug, get_drug)))
-    variants[["chrom"]] <- NA
-    variants[["pos"]] <- NA
-    variants[["ref"]] <- NA
-    variants[["alt"]] <- NA
-    variants[["gene_name"]] <- NA
+  variants <- read_confirmed_variants(variants_file = variants_file)
   
   # loop through the files and summarise the malaria-profiler output
   other_dr <- NULL
