@@ -23,10 +23,10 @@ get_drug <- function(x) {
 construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
   # select the columns of interest
   dat <- dat |>
-    dplyr::select(chrom, pos, ref, alt, gene_name, gene_id, protein_change) |>
+    dplyr::select(chrom, pos, ref, alt, gene_name, gene_id, protein_change) |> # nolint: object_usage_linter
     dplyr::rename(mutation = "protein_change") |>
     dplyr::distinct(.keep_all = TRUE)
-  
+
   # if first iteration, simply add the sample column
   if (is.null(tmp_others_dr)) {
     tmp_others_dr <- dat
@@ -36,30 +36,13 @@ construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
     # check for common mutations between the new sample and the ones that are
     # already stored
     # if any new mutation, add it
-    current_samples <- names(tmp_others_dr)[-c(1:7)]
+    current_samples <- names(tmp_others_dr)[-1:7]
     tmp_others_dr[[sample_name]] <- 0
-    target <- as.character(
-      apply(
-        cbind(tmp_others_dr[["chrom"]], tmp_others_dr[["pos"]], tmp_others_dr[["mutation"]]),
-        1,
-        paste,
-        collapse = "_"
-      )
-    )
-    test <- as.character(
-      apply(
-        cbind(dat[["chrom"]], dat[["pos"]], dat[["mutation"]]),
-        1,
-        paste,
-        collapse = "_"
-      )
-    )
     idx <- match(dat$mutation, tmp_others_dr$mutation)
     tmp_others_dr[[sample_name]][idx[!is.na(idx)]] <- 1
-    if (any(is.na(idx))) {
+    if (anyNA(idx)) {
       dat <- dat |>
-        dplyr::mutate(sample = 1) |>
-        dplyr::mutate(idx = idx) |>
+        dplyr::mutate(sample = 1, idx = idx) |>
         dplyr::filter(is.na(idx)) |>
         dplyr::mutate(idx = NULL)
       names(dat)[ncol(dat)] <- sample_name
@@ -70,7 +53,7 @@ construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
       tmp_others_dr <- rbind(tmp_others_dr, dat)
     }
   }
-  
+
   return(tmp_others_dr)
 }
 
@@ -89,41 +72,41 @@ get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
   # given sample, fill it with NA
   df_scalars <- nested_list |>
     purrr::map_dfr(function(x) {
-      scalars <- x[!sapply(x, is.list)]
+      scalars <- x[!sapply(x, is.list)] # nolint: undesirable_function_linter
       # replace NULL or empty values with NA
       scalars <- lapply(scalars, function(v) {
         if (is.null(v) || length(v) == 0) NA else v
       })
       as.data.frame(scalars)
     })
-  
+
   # for the nested list of 8 elements
   df_nested <- nested_list |>
     purrr::map_dfr(function(x) {
-      nested <- x[sapply(x, is.list)]
+      nested <- x[sapply(x, is.list)] # nolint: undesirable_function_linter
       as.data.frame(t(unlist(nested)))
     })
-  
+
   # combine the two side by side
   df_final <- dplyr::bind_cols(df_scalars, df_nested)
   num_mutations <- nrow(df_final)
-  num_genes <- length(unique(df_final[["gene_name"]]))
+  num_genes <- length(unique(df_final[["gene_name"]])) # nolint: object_usage_linter
   cli::cli_alert_info(
     "Found {cli::no(num_mutations)} mutation{?s} across {cli::no(num_genes)} \\\
     protential drug resistance gene{?s} in sample {.val {sample_name}}."
   )
-  
+
   # if no other mutations is found for the target sample, add a new column for
   # the sample and set all values at 0
   if (num_mutations == 0) {
     tmp_others_dr[[sample_name]] <- 0
     return(tmp_others_dr)
   }
-  
+
   # when mutations are found, account for them by considering the ones that are
   # already detected from the processed samples
   tmp_others_dr <- construct_dr_matrix(df_final, sample_name, tmp_others_dr)
-  
+
   return(tmp_others_dr)
 }
 
@@ -131,7 +114,7 @@ get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
 #' Extract the prediction region of origin for the specified sample
 #'
 #' @inheritParams get_confirmed_dr_variants
-#' @inheritParams summarise_mp_outputs 
+#' @inheritParams summarise_mp_outputs
 #' @param region_proba A data frame used to store the prediction probabilities
 #'    for each region
 #'
@@ -144,14 +127,16 @@ get_inferred_region <- function(json, metadata, region_proba, sample_name) {
     dplyr::bind_rows()
   # when the region was not inferred, set it to NA in the metadata
   idx <- match(sample_name, metadata[["samples"]])
-  metadata[["fraction_genotyped_geo"]][idx] <- json[["geo_classification"]][["fraction_genotyped"]]
+  metadata[["fraction_genotyped_geo"]][idx] <-
+    json[["geo_classification"]][["fraction_genotyped"]]
   if (nrow(regions) == 0) {
     metadata[["region"]][idx] <- NA
   } else {
     regions <- regions |>
-      dplyr::mutate(probability = format(probability, scientific = FALSE))
-    metadata[["region"]][idx] <- regions[["region"]][which.max(regions[["probability"]])]
-    
+      dplyr::mutate(probability = format(probability, scientific = FALSE)) # nolint: object_usage_linter
+    metadata[["region"]][idx] <-
+      regions[["region"]][which.max(regions[["probability"]])]
+
     # populate the data with the region probabilities
     regions <- as.data.frame(t(regions))
     regions <- regions[-1, ]
@@ -161,10 +146,10 @@ get_inferred_region <- function(json, metadata, region_proba, sample_name) {
     names(regions) <- names(region_proba)[-1]
     regions <- regions |>
       dplyr::mutate(samples = sample_name) |>
-      dplyr::relocate(samples, .before = `Central Africa`)
+      dplyr::relocate(samples, .before = `Central Africa`) # nolint: object_usage_linter
     region_proba <- rbind(region_proba, regions)
   }
-  
+
   return(list(
     metadata = metadata,
     region_proba = region_proba
@@ -186,7 +171,7 @@ get_confirmed_dr_variants <- function(json, variants, sample_name) {
   # add a column for the target sample
   # all values are set to '0' by default
   variants[[sample_name]] <- 0
-  
+
   # identify the drug resistance mutations found on the target sample
   # and set the corresponding row to 1 (to mark its presence on that sample)
   resistance_mutations <- json[["dr_variants"]] |>
@@ -216,9 +201,10 @@ get_confirmed_dr_variants <- function(json, variants, sample_name) {
     variants[["pos"]][selection_table[["idx"]]] <- selection_table[["pos"]]
     variants[["ref"]][selection_table[["idx"]]] <- selection_table[["ref"]]
     variants[["alt"]][selection_table[["idx"]]] <- selection_table[["alt"]]
-    variants[["gene_name"]][selection_table[["idx"]]] <- selection_table[["gene_name"]]
+    variants[["gene_name"]][selection_table[["idx"]]] <-
+      selection_table[["gene_name"]]
   }
-  
+
   return(variants)
 }
 
@@ -232,9 +218,9 @@ get_confirmed_dr_variants <- function(json, variants, sample_name) {
 import_from_csv <- function(variants_file) {
   variants <- rio::import(variants_file) |>
     cleanepi::standardize_column_names(
-      rename = c("gene_id" = "Gene", "drug" = "Info")
+      rename = c(gene_id = "Gene", drug = "Info")
     ) |>
-    dplyr::mutate(drug = as.character(lapply(drug, get_drug)))
+    dplyr::mutate(drug = as.character(lapply(drug, get_drug))) # nolint: object_usage_linter
   return(variants)
 }
 
@@ -253,10 +239,10 @@ import_from_json <- function(variants_file) {
     drug = character(),
     stringsAsFactors = FALSE
   )
-  
+
   # read in the variant file in json format
   variants <- jsonlite::read_json(variants_file)
-  
+
   # loop through each element of the list (each gene)
   for (gene in names(variants)) {
     x <- variants[[gene]]
@@ -285,19 +271,19 @@ read_confirmed_variants <- function(variants_file) {
   file_extension <- unlist(
     strsplit(basename(variants_file), ".", fixed = TRUE)
   )[[2]]
-  
+
   # read in the variant file depending on the provided file type
   variants <- switch(file_extension,
     csv = import_from_csv(variants_file),
     json = import_from_json(variants_file)
   )
-  
+
   # add the variant genomic coordinate columns
   variants[["chrom"]] <- NA
   variants[["pos"]] <- NA
   variants[["ref"]] <- NA
   variants[["alt"]] <- NA
   variants[["gene_name"]] <- NA
-  
+
   return(variants)
 }

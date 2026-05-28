@@ -52,18 +52,18 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
   mutation_type <- match.arg(mutation_type)
   checkmate::assert_logical(geo_localisation, any.missing = FALSE, len = 1,
                             null.ok = FALSE)
-  
+
   # read in the metadata file
   metadata <- rio::import(metadata_file)
   if (!"samples" %in% names(metadata)) {
     cli::cli_abort(c(
-      "i" = "Column {.field samples} not found in metadata file.",
-      "x" = "The column with the sample IDs must be named as {.field samples}."
+      i = "Column {.field samples} not found in metadata file.",
+      x = "The column with the sample IDs must be named as {.field samples}."
     ))
   }
   metadata[["region"]] <- NA # for the inferred region
   metadata[["fraction_genotyped_geo"]] <- NA # for the inferred fraction
-  
+
   # create a data frame to store the probabilities of inferred regions
   region_proba <- data.frame(
     samples = character(),
@@ -72,31 +72,29 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
     sa = numeric(),
     sas = numeric(),
     seas = numeric(),
-    wa = numeric()
+    wa = numeric(),
+    stringsAsFactors = FALSE
   )
   names(region_proba) <- c("samples", "Central Africa", "Eastern Africa",
                            "South America", "South Asia", "Southeast Asia",
                            "Western Africa")
-  
+
   # get the list of output files
   target_files <- list.files(
     path = target_dir,
     full.names = TRUE,
     pattern = "*.json"
   )
-  
-  # get the sample names
-  samples <- gsub(".results.json", "", basename(target_files))
-  
+
   # read in the variants file
   variants <- read_confirmed_variants(variants_file = variants_file)
-  
+
   # loop through the files and summarise the malaria-profiler output
   other_dr <- NULL
   for (file in target_files) {
     # read in the JSON file
     json <- jsonlite::read_json(file)
-    
+
     # add a column for the target sample
     # all values are set to '0' by default
     sample_name <- gsub(".results.json", "", basename(file))
@@ -116,7 +114,7 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
       )
     )
     other_dr <- variants <- resistance_mutations
-    
+
     # extract the geo-localisation information for the target sample
     if (geo_localisation) {
       geo_localisation_data <- get_inferred_region(
@@ -128,9 +126,8 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
       metadata <- geo_localisation_data[["metadata"]]
       region_proba <- geo_localisation_data[["region_proba"]]
     }
-    
   }
-  
+
   # return a list with the 3 elements
   return(list(
     variants = variants,
@@ -138,7 +135,3 @@ summarise_mp_outputs <- function(target_dir, variants_file, metadata_file,
     region_probabilities = region_proba
   ))
 }
-
-
-
-
