@@ -17,6 +17,12 @@ authors:
   given-names: Karim
   email: karimanee@outlook.com
   orcid: https://orcid.org/0000-0002-9892-2999
+- family-names: Delandre
+  given-names: Océane
+  email: o.delandre@gmail.com
+- family-names: javelle
+  given-names: Emilie
+  email: emilie.javelle@gmail.com
 contact:
 - family-names: Mané
   given-names: Karim
@@ -29,10 +35,13 @@ references:
   url: https://www.R-project.org/
   authors:
   - name: R Core Team
+    website: https://ror.org/02zz1nj61
   institution:
     name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
     address: Vienna, Austria
   year: '2026'
+  doi: 10.32614/R.manuals
   version: '>= 4.0.0'
 - type: software
   title: checkmate
@@ -72,8 +81,8 @@ references:
     given-names: Bubacarr
     email: Bubacarr.Bah1@lshtm.ac.uk
     orcid: https://orcid.org/0000-0003-3318-6668
-  doi: 10.32614/CRAN.package.cleanepi
   year: '2026'
+  doi: 10.32614/CRAN.package.cleanepi
 - type: software
   title: cli
   abstract: 'cli: Helpers for Developing Command Line Interfaces'
@@ -165,6 +174,19 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.rio
 - type: software
+  title: cffr
+  abstract: 'cffr: Generate Citation File Format (''cff'') Metadata for R Packages'
+  notes: Suggests
+  url: https://docs.ropensci.org/cffr/
+  repository: https://CRAN.R-project.org/package=cffr
+  authors:
+  - family-names: Hernangómez
+    given-names: Diego
+    email: diego.hernangomezherrero@gmail.com
+    orcid: https://orcid.org/0000-0001-8457-4658
+  year: '2026'
+  doi: 10.32614/CRAN.package.cffr
+- type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
   notes: Suggests
@@ -193,6 +215,7 @@ references:
   - family-names: Chirico
     given-names: Michael
     email: michaelchirico4@gmail.com
+    orcid: https://orcid.org/0000-0003-0787-087X
   - family-names: Ren
     given-names: Kun
   - family-names: Rosenstock
@@ -201,6 +224,9 @@ references:
     given-names: Indrajeet
     email: patilindrajeet.science@gmail.com
     orcid: https://orcid.org/0000-0003-1995-6531
+  - family-names: Gruson
+    given-names: Hugo
+    orcid: https://orcid.org/0000-0002-4094-1476
   year: '2026'
   doi: 10.32614/CRAN.package.lintr
 - type: software
