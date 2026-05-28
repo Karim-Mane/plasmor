@@ -21,6 +21,7 @@ get_drug <- function(x) {
 #'    column corresponding the profile of the target sample
 #' @keywords internal
 construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
+  chrom <- pos <- ref <- alt <- gene_name <- gene_id <- protein_change <- NULL
   # select the columns of interest
   dat <- dat |>
     dplyr::select(chrom, pos, ref, alt, gene_name, gene_id, protein_change) |> # nolint: object_usage_linter
@@ -122,6 +123,7 @@ get_other_dr_variants <- function(nested_list, sample_name, tmp_others_dr) {
 #'    data frame
 #' @keywords internal
 get_inferred_region <- function(json, metadata, region_proba, sample_name) {
+  probability <- samples <- `Central Africa` <- NULL
   # populate the inferred region column in the sample metadata
   regions <- json[["geo_classification"]][["probabilities"]] |>
     dplyr::bind_rows()
@@ -216,6 +218,7 @@ get_confirmed_dr_variants <- function(json, variants, sample_name) {
 #'    the name of the drug
 #' @keywords internal
 import_from_csv <- function(variants_file) {
+  drug <- NULL
   variants <- rio::import(variants_file) |>
     cleanepi::standardize_column_names(
       rename = c(gene_id = "Gene", drug = "Info")
