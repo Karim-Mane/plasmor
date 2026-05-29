@@ -6,7 +6,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-9892-2999")),
     person("Océane", "Delandre", , "o.delandre@gmail.com", role = c("aut", "rev"),
            comment = c(ORCID = "")),
-    person("Emilie", "javelle", , "emilie.javelle@gmail.com", role = c("aut", "rev"),
+    person("Emilie", "Javelle", , "emilie.javelle@gmail.com", role = c("aut", "rev"),
            comment = c(ORCID = ""))
   )
 Description: The package is a library of functions to analyse different
