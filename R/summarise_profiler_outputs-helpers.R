@@ -37,7 +37,7 @@ construct_dr_matrix <- function(dat, sample_name, tmp_others_dr) {
     # check for common mutations between the new sample and the ones that are
     # already stored
     # if any new mutation, add it
-    current_samples <- names(tmp_others_dr)[-1:7]
+    current_samples <- names(tmp_others_dr)[-(1:7)]
     tmp_others_dr[[sample_name]] <- 0
     idx <- match(dat$mutation, tmp_others_dr$mutation)
     tmp_others_dr[[sample_name]][idx[!is.na(idx)]] <- 1
