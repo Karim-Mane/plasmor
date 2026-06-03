@@ -1,6 +1,7 @@
 Package: plasmor
 Title: Analyse Plasmodium falciparum Data
 Version: 0.0.1
+Date: 2026-06-03
 Authors@R: c(
     person("Karim", "Mané", , "karimanee@outlook.com", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0002-9892-2999")),
