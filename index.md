@@ -51,7 +51,7 @@ By contributing to this project, you agree to abide by its terms.
 citation("plasmor")
 #> To cite package 'plasmor' in publications use:
 #> 
-#>   Mané K, Delandre O, Javelle E (????). _plasmor: Analyse Plasmodium
+#>   Mané K, Delandre O, Javelle E (2026). _plasmor: Analyse Plasmodium
 #>   falciparum Data_. R package version 0.0.1.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -59,6 +59,7 @@ citation("plasmor")
 #>   @Manual{,
 #>     title = {plasmor: Analyse Plasmodium falciparum Data},
 #>     author = {Karim Mané and Océane Delandre and Emilie Javelle},
+#>     year = {2026},
 #>     note = {R package version 0.0.1},
 #>   }
 ```
