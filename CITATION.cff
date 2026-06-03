@@ -35,13 +35,10 @@ references:
   url: https://www.R-project.org/
   authors:
   - name: R Core Team
-    website: https://ror.org/02zz1nj61
   institution:
     name: R Foundation for Statistical Computing
-    website: https://ror.org/05qewa988
     address: Vienna, Austria
   year: '2026'
-  doi: 10.32614/R.manuals
   version: '>= 4.0.0'
 - type: software
   title: checkmate
@@ -81,8 +78,8 @@ references:
     given-names: Bubacarr
     email: Bubacarr.Bah1@lshtm.ac.uk
     orcid: https://orcid.org/0000-0003-3318-6668
-  year: '2026'
   doi: 10.32614/CRAN.package.cleanepi
+  year: '2026'
 - type: software
   title: cli
   abstract: 'cli: Helpers for Developing Command Line Interfaces'
@@ -215,7 +212,6 @@ references:
   - family-names: Chirico
     given-names: Michael
     email: michaelchirico4@gmail.com
-    orcid: https://orcid.org/0000-0003-0787-087X
   - family-names: Ren
     given-names: Kun
   - family-names: Rosenstock
@@ -224,9 +220,6 @@ references:
     given-names: Indrajeet
     email: patilindrajeet.science@gmail.com
     orcid: https://orcid.org/0000-0003-1995-6531
-  - family-names: Gruson
-    given-names: Hugo
-    orcid: https://orcid.org/0000-0002-4094-1476
   year: '2026'
   doi: 10.32614/CRAN.package.lintr
 - type: software
