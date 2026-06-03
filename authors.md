@@ -7,16 +7,16 @@
 
 - **Océane Delandre**. Author, reviewer.
 
-- **Emilie javelle**. Author, reviewer.
+- **Emilie Javelle**. Author, reviewer.
 
 ## Citation
 
-Mané K, Delandre O, javelle E (2026). *plasmor: Analyse Plasmodium
+Mané K, Delandre O, Javelle E (2026). *plasmor: Analyse Plasmodium
 falciparum Data*. R package version 0.0.1.
 
     @Manual{,
       title = {plasmor: Analyse Plasmodium falciparum Data},
-      author = {Karim Mané and Océane Delandre and Emilie javelle},
+      author = {Karim Mané and Océane Delandre and Emilie Javelle},
       year = {2026},
       note = {R package version 0.0.1},
     }

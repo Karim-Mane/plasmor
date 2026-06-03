@@ -13,4 +13,4 @@ Authors:
 
 - Océane Delandre <o.delandre@gmail.com> \[reviewer\]
 
-- Emilie javelle <emilie.javelle@gmail.com> \[reviewer\]
+- Emilie Javelle <emilie.javelle@gmail.com> \[reviewer\]
