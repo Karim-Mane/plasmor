@@ -59,3 +59,6 @@ rsconnect/
 revdep/library
 revdep/data.sqlite
 revdep/checks
+
+# images in inst/ folder
+inst/images/
