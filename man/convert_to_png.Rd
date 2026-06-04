@@ -19,8 +19,10 @@ Invisibly return a vector of the converted images
 Convert images to PNG format
 }
 \examples{
-# convert a specific image
-convert_to_png(
-  images <- system.file("images", "Image003.heic", package = "plasmor")
-)
+\dontrun{
+  # convert a specific image
+  convert_to_png(
+    images <- system.file("images", "Image003.heic", package = "plasmor")
+  )
+}
 }
