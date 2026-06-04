@@ -97,3 +97,4 @@ convert_to_png <- function(images = NULL, images_path = NULL) {
   
   return(invisible(png_images))
 }
+  
