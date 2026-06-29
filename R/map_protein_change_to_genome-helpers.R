@@ -1,0 +1,265 @@
+# =============================================================================
+# P. falciparum Protein Change → Genomic Position Mapper
+# =============================================================================
+# Usage:
+#   1. Set gff_file and fasta_file paths
+#   2. Edit the variants list with your protein changes
+#   3. Run: Rscript pfalciparum_variant_mapper.R
+# =============================================================================
+# Adding a new gene
+# Just add one line to gene_lookup and one line to variants:
+# gene_lookup["SERA5"] <- "PF3D7_0207900"
+# new_variant <- list(gene = "SERA5", pos = 350, ref = "A", alt = "T")
+# variants = c(variants, new_variant)
+# =============================================================================
+
+library(Biostrings)
+
+# ── File paths ────────────────────────────────────────────────────────────────
+ref_genome_file = "~/Documents/Karim/LSHTM/Bioinformatics/ref_genomes/PlasmoDB-68_Pfalciparum3D7_Genome.fasta"
+gff_file = "~/Documents/Karim/LSHTM/Bioinformatics/ref_genomes/PlasmoDB-68_Pfalciparum3D7.gff"
+gene_name = "DHPS"
+protein_position = 437
+ref_aa = "A"
+alt_aa = "G"
+
+# ── Lookup table: gene name → PlasmoDB ID ─────────────────────────────────────
+# Add more genes as needed
+gene_lookup <- c(
+  "MDR1" = "PF3D7_0523000",    # Multidrug resistance protein 1      chr5
+  "CRT" = "PF3D7_0709000",     # Chloroquine resistance transporter  chr7
+  "DHFR" = "PF3D7_0417200",    # Dihydrofolate reductase             chr4
+  "DHPS" = "PF3D7_0810800",    # Dihydropteroate synthase            chr8
+  "K13" = "PF3D7_1343700",     # Kelch 13 (artemisinin resistance)   chr13
+  "FNT" = "PF3D7_0209300",     # Formate-nitrite transporter         chr2
+  "ARPS10" = "PF3D7_1460900",  # Apicoplast ribosomal protein S10    chr14
+  "MDR2" = "PF3D7_1447900",    # Multidrug resistance protein 2      chr14
+  "CLAG" = "PF3D7_0302500",    # Cytoadherence linked asexual gene   chr3
+  "EBA175" = "PF3D7_0731500"   # Erythrocyte binding antigen 175     chr7
+)
+
+# ── Variants to analyse ───────────────────────────────────────────────────────
+# Format: list(gene = "GENE_NAME", pos = protein_position, ref = "X", alt = "Y")
+# Use standard one-letter amino acid codes
+variants <- list(
+  list(gene = "MDR1", pos = 86,  ref = "N", alt = "Y"),   # N86Y
+  list(gene = "MDR1", pos = 184, ref = "Y", alt = "F"),   # Y184F
+  list(gene = "MDR1", pos = 1034, ref = "S", alt = "C"),  # S1034C
+  list(gene = "MDR1", pos = 1042, ref = "N", alt = "D"),  # N1042D
+  list(gene = "MDR1", pos = 1246, ref = "D", alt = "Y"),  # D1246Y
+  list(gene = "CRT",  pos = 72,  ref = "C", alt = "S"),   # C72S
+  list(gene = "CRT",  pos = 74,  ref = "M", alt = "I"),   # M74I
+  list(gene = "CRT",  pos = 75,  ref = "N", alt = "E"),   # N75E
+  list(gene = "CRT",  pos = 76,  ref = "K", alt = "T"),   # K76T
+  list(gene = "DHFR", pos = 16,  ref = "A", alt = "V"),   # A16V
+  list(gene = "DHFR", pos = 51,  ref = "N", alt = "I"),   # N51I
+  list(gene = "DHFR", pos = 59,  ref = "C", alt = "R"),   # C59R
+  list(gene = "DHFR", pos = 108, ref = "S", alt = "N"),   # S108N
+  list(gene = "DHFR", pos = 164, ref = "I", alt = "L"),   # I164L
+  list(gene = "DHPS", pos = 436, ref = "S", alt = "A"),   # S436A
+  list(gene = "DHPS", pos = 437, ref = "A", alt = "G"),   # A437G
+  list(gene = "DHPS", pos = 540, ref = "K", alt = "E"),   # K540E
+  list(gene = "DHPS", pos = 581, ref = "A", alt = "G"),   # A581G
+  list(gene = "DHPS", pos = 613, ref = "A", alt = "S"),   # A613S
+  list(gene = "K13",  pos = 580, ref = "C", alt = "Y"),   # C580Y
+  list(gene = "K13",  pos = 539, ref = "R", alt = "T"),   # R539T
+  list(gene = "K13",  pos = 493, ref = "Y", alt = "H"),   # Y493H
+  list(gene = "K13",  pos = 476, ref = "F", alt = "L"),   # F476L
+  list(gene = "K13",  pos = 543, ref = "M", alt = "T"),   # M543T
+  list(gene = "FNT",  pos = 107, ref = "G", alt = "S"),   # G107S
+  list(gene = "FNT",  pos = 196, ref = "V", alt = "L"),   # V196L
+  list(gene = "FNT",  pos = 21, ref = "G", alt = "E")     # G21E
+)
+
+# =============================================================================
+# FUNCTIONS
+# =============================================================================
+
+#' Parse GFF file into a data frame
+#'
+#' @param gff_file
+#' @returns A data frame with the gene genomic coordinates and feature
+#'    annotation
+#' @keywords internal
+parse_gff <- function(gff_file) {
+  lines <- readLines(gff_file)
+  lines <- lines[!startsWith(lines, "#")]
+  fields <- strsplit(lines, "\t")
+  fields <- fields[lengths(fields) >= 9]
+  
+  return(
+    data.frame(
+      chrom = sapply(fields, `[[`, 1),
+      feature = sapply(fields, `[[`, 3),
+      start = as.integer(sapply(fields, `[[`, 4)),
+      end = as.integer(sapply(fields, `[[`, 5)),
+      strand = sapply(fields, `[[`, 7),
+      attributes = sapply(fields, `[[`, 9),
+      stringsAsFactors = FALSE
+    )
+  )
+}
+
+#' Extract CDS intervals for a given PlasmoDB gene ID
+#'
+#' @param gff_df A data frame generated by the `parse_gff()` function
+#' @param gene_id A character with gene ID
+#'
+#' @returns A data frame with the coding sequence information for the specified
+#'    gene ID. It returns `NULL` when no match is found.
+#' @keywords internal
+get_cds <- function(gff_df, gene_id) {
+  cds_df <- gff_df[gff_df[["feature"]] == "CDS" &
+                     grepl(gene_id, gff_df[["attributes"]], fixed = TRUE), ]
+  if (nrow(cds_df) == 0) return(NULL)
+  
+  strand <- unique(cds_df[["strand"]])
+  cds_df <- cds_df[order(cds_df[["start"]], decreasing = (strand == "-")), ]
+  return(cds_df)
+}
+
+#' Map a protein position to 3 genomic coordinates (the codon)
+#'
+#' @param cds_df A data frame generated by the `get_cds()` function
+#' @param protein_pos An integer with the position of the protein mutation
+#'
+#' @returns A list with the corresponding genomic coordinates (chromosome,
+#'    position, and strand) of the three nucleotides that form the codon of the
+#'    given protein position. It returns `NULL` when no match is found.
+#' @keywords internal
+get_codon_positions <- function(cds_df, protein_pos) {
+  strand <- unique(cds_df[["strand"]])
+  cds_start <- (protein_pos - 1) * 3 + 1   # 1-based CDS position
+
+  accumulated <- 0L 
+  codon_bases <- list()
+  remaining <- 3L
+
+  for (row in seq_len(nrow(cds_df))) {
+    chrom <- cds_df[["chrom"]][row]
+    start <- cds_df[["start"]][row]
+    end <- cds_df[["end"]][row]
+    exon_len <- end - start + 1L
+
+    if (accumulated + exon_len < cds_start) {
+      accumulated <- accumulated + exon_len
+      next
+    }
+
+    for (i in seq(0L, exon_len - 1L)) {
+      cds_i <- accumulated + i + 1L
+      if (cds_i >= cds_start && cds_i < cds_start + 3L) {
+        genomic_pos <- if (strand == "+") start + i else end - i
+        codon_bases <- c(codon_bases, list(c(
+          chrom = chrom,
+          pos = as.character(genomic_pos),
+          strand = strand
+        )))
+        remaining <- remaining - 1L
+        if (remaining == 0L) break
+      }
+    }
+    accumulated <- accumulated + exon_len
+    if (remaining == 0L) break
+  }
+
+  if (length(codon_bases) < 3) {
+    codon_bases <- NULL
+  }
+  return(codon_bases)
+}
+
+#' Extract reference codon sequence from genome FASTA
+#'
+#' @param genome A DNAString object with the reference genome sequence 
+#' @param codon_bases A list with the codon coordinates of the protein mutation
+#'    on each exon of the target gene
+#' @param strand A character vector with strand of each exon of the gene
+#' @returns A character with the reference codon obtained from the reference
+#'    genome sequence and codon coordinates
+#' @keywords internal
+get_ref_codon <- function(genome, codon_bases, strand) {
+  nts <- character(3)
+  for (k in 1:3) {
+    chrom <- codon_bases[[k]]["chrom"]
+    pos <- as.integer(codon_bases[[k]]["pos"])
+    nts[k] <- as.character(Biostrings::subseq(genome[[chrom]], start = pos, end = pos))
+  }
+  codon_seq <- Biostrings::DNAString(paste(nts, collapse = ""))
+  if (strand == "-") codon_seq <- Biostrings::reverseComplement(codon_seq)
+
+  return(codon_seq)
+}
+
+#' Scan all SNPs in codon and find which causes ref_aa → alt_aa
+#'
+#' @param codon_bases A list with the codon coordinates of the protein mutation
+#'    on each exon of the target gene
+#' @param codon_seq A character with the reference codon sequence
+#' @param ref_aa A character with the provided reference amino acid of the
+#'    protein change of interest
+#' @param alt_aa A character with the provided alternative amino acid of the
+#'    protein change of interest
+#' @param strand A character vector with strand of each exon of the gene
+#'
+#' @returns A list with
+#' @keywords internal
+find_causative_snp <- function(codon_bases, codon_seq, ref_aa, alt_aa, strand) {
+  ref_codon_str <- as.character(codon_seq)
+  bases <- c("A", "T", "C", "G")
+  results <- list()
+  
+  for (k in 1:3) {
+    ref_nt <- substr(ref_codon_str, k, k)
+    genomic_pos <- as.integer(codon_bases[[k]]["pos"])
+    chrom <- codon_bases[[k]]["chrom"]
+    
+    for (alt_nt in bases) {
+      if (alt_nt == ref_nt) next
+      
+      mut_codon <- strsplit(ref_codon_str, "")[[1]]
+      mut_codon[k] <- alt_nt
+      mut_codon_str <- paste(mut_codon, collapse = "")
+      mut_aa <- as.character(
+        Biostrings::translate(Biostrings::DNAString(mut_codon_str))
+      )
+      
+      if (mut_aa == alt_aa) {
+        results <- c(results, list(list(
+          chrom = chrom,
+          genomic_pos = genomic_pos,
+          codon_pos = k,
+          ref_nt = ref_nt,
+          alt_nt = alt_nt,
+          ref_codon = ref_codon_str,
+          alt_codon = mut_codon_str
+        )))
+      }
+    }
+  }
+  return(results)
+}
+
+#' Resolve gene name to PlasmoDB ID
+#'
+#' @param gene_name A character with the gene name
+#' @param gene_lookup A named vector of the predefined set of resistance genes
+#'
+#' @returns The corresponding gene ID for the provided gene name. The function
+#'    raises an error if the provided gene name is not part of the set of
+#'    predefined target genes.
+#' @keywords internal
+resolve_gene_id <- function(gene_name, gene_lookup) {
+  if (gene_name %in% names(gene_lookup)) {
+    return(gene_lookup[[gene_name]])
+  }
+  # If it looks like a PlasmoDB ID already (PF3D7_XXXXXXX), use as-is
+  if (grepl("^PF3D7_", gene_name)) {
+    return(gene_name)
+  }
+  cli::cli_abort(c(
+    x = "{.val {gene_name}} is part of the set of predefined genes.",
+    i = "Please use the {.fn add_gene} function to add it.",
+    "!" = "You can alternatively use the gene ID directly instead."
+  ))
+}
