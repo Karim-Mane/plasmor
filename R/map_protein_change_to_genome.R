@@ -11,7 +11,8 @@
 #' @param alt_aa A character with the one-letter amino acid code for the
 #'    alternative amino acid
 #'
-#' @returns
+#' @returns Prints a table with the codon information for all possible SNPs
+#'    which can cause the given protein change
 #' @export
 #'
 #' @examples
