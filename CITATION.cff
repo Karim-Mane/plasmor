@@ -1,7 +1,7 @@
-# --------------------------------------------
-# CITATION file created with {cffr} R package
+# ------------------------------------------------
+# CITATION.cff file created with {cffr} R package
 # See also: https://docs.ropensci.org/cffr/
-# --------------------------------------------
+# ------------------------------------------------
  
 cff-version: 1.2.0
 message: 'To cite package "plasmor" in publications use:'
@@ -23,6 +23,7 @@ authors:
 - family-names: Javelle
   given-names: Emilie
   email: emilie.javelle@gmail.com
+date-released: '2026-06-03'
 contact:
 - family-names: Mané
   given-names: Karim
@@ -35,10 +36,13 @@ references:
   url: https://www.R-project.org/
   authors:
   - name: R Core Team
+    website: https://ror.org/02zz1nj61
   institution:
     name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
     address: Vienna, Austria
   year: '2026'
+  doi: 10.32614/R.manuals
   version: '>= 4.0.0'
 - type: software
   title: checkmate
@@ -78,8 +82,8 @@ references:
     given-names: Bubacarr
     email: Bubacarr.Bah1@lshtm.ac.uk
     orcid: https://orcid.org/0000-0003-3318-6668
-  doi: 10.32614/CRAN.package.cleanepi
   year: '2026'
+  doi: 10.32614/CRAN.package.cleanepi
 - type: software
   title: cli
   abstract: 'cli: Helpers for Developing Command Line Interfaces'
@@ -172,7 +176,7 @@ references:
   doi: 10.32614/CRAN.package.rio
 - type: software
   title: cffr
-  abstract: 'cffr: Generate Citation File Format (''cff'') Metadata for R Packages'
+  abstract: 'cffr: Generate Citation File Format (''CFF'') Metadata for R Packages'
   notes: Suggests
   url: https://docs.ropensci.org/cffr/
   repository: https://CRAN.R-project.org/package=cffr
@@ -212,6 +216,7 @@ references:
   - family-names: Chirico
     given-names: Michael
     email: michaelchirico4@gmail.com
+    orcid: https://orcid.org/0000-0003-0787-087X
   - family-names: Ren
     given-names: Kun
   - family-names: Rosenstock
@@ -220,6 +225,11 @@ references:
     given-names: Indrajeet
     email: patilindrajeet.science@gmail.com
     orcid: https://orcid.org/0000-0003-1995-6531
+  - family-names: Gruson
+    given-names: Hugo
+    orcid: https://orcid.org/0000-0002-4094-1476
+  - family-names: Ferdman
+    given-names: Emmanuel
   year: '2026'
   doi: 10.32614/CRAN.package.lintr
 - type: software
