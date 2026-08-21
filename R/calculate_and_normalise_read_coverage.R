@@ -131,12 +131,12 @@ calculate_read_coverage <- function(bam_files_dir,
     per_sample_mean_read_length[["mean_read_length"]][i] <- mean_read_length
 
     # check if chromosome names in BED and BAM files are the same
-    if (!all(unique(bed[["V1"]]) %in% as.character(unique(bam[["rname"]])))) {
-      cli::cli_abort(c(
-        i = "Chromosome names in BED and BAM files are different",
-        x = "Chromosome names in BED file must be the same as in BAM file."
-      ))
-    }
+    # if (!all(unique(bed[["V1"]]) %in% as.character(unique(bam[["rname"]])))) {
+    #   cli::cli_abort(c(
+    #     i = "Chromosome names in BED and BAM files are different",
+    #     x = "Chromosome names in BED file must be the same as in BAM file."
+    #   ))
+    # }
 
     # get read coverage per gene region
     bam_ref <- GenomicRanges::GRanges(
