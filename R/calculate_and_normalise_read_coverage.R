@@ -176,6 +176,19 @@ calculate_read_coverage <- function(bam_files_dir,
 #'    function.
 #' @returns A numeric matrix obtained from the normalization process explained
 #'    in the function description.
+#' @export
+#' @examples
+#' \dontrun{
+#'   res <- calculate_read_coverage(
+#'     bam_files_dir = "data/alignment_outputs",
+#'     bam_files_suffix = "*_recal.bam",
+#'     bed_file = "ref_genomes/PlasmoDB-68_Pfalciparum3D7_genes_only.bed",
+#'     gene_level_bed = TRUE,
+#'     count_dups = FALSE
+#'   )
+#'   per_gene_coverage <- res[["coverage_matrix"]]
+#'   res <- normalize_coverage_matrix(per_gene_coverage)
+#' }
 normalize_coverage_matrix <- function(coverage_matrix){
   # calculate the relative read count abundance normalization i.e.
   # for each sample, divide a region read count by the sum read count across
