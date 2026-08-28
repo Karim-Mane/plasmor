@@ -22,3 +22,16 @@ regions (also known as total sum scaling). This gives the relative coverage
 of each gene as a proportion of total coverage per sample.
 Then computes the z-scores on the normalised coverage data.
 }
+\examples{
+\dontrun{
+  res <- calculate_read_coverage(
+    bam_files_dir = "data/alignment_outputs",
+    bam_files_suffix = "*_recal.bam",
+    bed_file = "ref_genomes/PlasmoDB-68_Pfalciparum3D7_genes_only.bed",
+    gene_level_bed = TRUE,
+    count_dups = FALSE
+  )
+  per_gene_coverage <- res[["coverage_matrix"]]
+  res <- normalize_coverage_matrix(per_gene_coverage)
+}
+}

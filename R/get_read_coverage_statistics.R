@@ -51,7 +51,7 @@ get_end_pos = function(x) {
 #' Extract genes genomic coordinates from the row names of the read coverage 
 #' matrix
 #'
-#' @inheritParams perform_coverage_qc coverage_matrix
+#' @inheritParams get_coverage_stats coverage_matrix
 #' @returns A list of two elements: the coverage data matrix where the row names
 #'    are only composed of the gene IDs, and a data frame with the gene's
 #'    genomic coordinates.
